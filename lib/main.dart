@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
-import 'features/home/presentation/pages/home_page.dart';
+import 'features/rebuild_lab/presentation/pages/rebuild_lab_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const PerformanceLabApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class PerformanceLabApp extends StatelessWidget {
+  const PerformanceLabApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Performance Lab',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+        ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Performance Lab'),
+      home: const RebuildLabPage(),
     );
   }
 }
