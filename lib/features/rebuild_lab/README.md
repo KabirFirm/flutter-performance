@@ -129,3 +129,90 @@ Profile again
     ↓
 Compare measurements
 ```
+
+## `const` vs Non-`const` Child Widgets
+
+An important observation during this experiment was the effect of `const` on the child widgets.
+
+### With `const`
+
+```dart
+const ExpensiveWidget(),
+
+const Expanded(
+  child: StudentList(),
+),
+```
+
+When the Increment button is pressed, `RebuildLabPage` rebuilds, but the unchanged `ExpensiveWidget` and `StudentList` subtrees are reused rather than unnecessarily rebuilding.
+
+Observed behavior:
+
+```text
+Increment
+    ↓
+RebuildLabPage rebuilt
+    ↓
+RebuildCounter rebuilt
+
+ExpensiveWidget   → reused
+StudentList       → reused
+```
+
+**Result:** No noticeable UI lag was observed during the experiment.
+
+---
+
+### Without `const`
+
+```dart
+ExpensiveWidget(),
+
+Expanded(
+  child: StudentList(),
+),
+```
+
+After removing `const`, the child widgets rebuilt whenever the parent rebuilt:
+
+```text
+Increment
+    ↓
+RebuildLabPage rebuilt
+    ↓
+RebuildCounter rebuilt
+ExpensiveWidget rebuilt
+StudentList rebuilt
+```
+
+Because `ExpensiveWidget` performs an intentionally expensive synchronous calculation inside `build()`, this unnecessary rebuild produced measurable UI-thread work.
+
+Observed DevTools result:
+
+```text
+Build:  27.7 ms
+Raster:  2.6 ms
+```
+
+The frame was reported as **UI Jank**.
+
+### Key takeaway
+
+`const` does not magically make Flutter applications fast. Its value in this experiment is that unchanged immutable widget configurations can be reused, helping Flutter avoid unnecessary rebuild work.
+
+The actual performance problem was:
+
+```text
+Parent state change
+      ↓
+Unnecessary child rebuild
+      ↓
+Expensive synchronous work
+      ↓
+UI thread exceeds frame budget
+      ↓
+Jank
+```
+
+This experiment demonstrates why **avoiding unnecessary rebuilds and keeping expensive work out of the frame's critical path** are important Flutter performance practices.
+
