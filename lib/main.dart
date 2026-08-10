@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'features/rebuild_lab/presentation/pages/rebuild_lab_page.dart';
+import 'features/scrolling_lab/presentation/pages/scrolling_lab_page.dart';
 
 void main() {
   runApp(const PerformanceLabApp());
@@ -19,7 +20,7 @@ class PerformanceLabApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const RebuildLabPage(),
+      home: const ScrollingLabPage(),
     );
   }
 }
